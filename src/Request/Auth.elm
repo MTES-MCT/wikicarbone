@@ -39,11 +39,7 @@ decodeAuthResponse =
                 else
                     Decode.succeed ErrorResponse
                         |> JDP.required "msg" Decode.string
-                        |> JDP.optional "errors"
-                            (Decode.dict Decode.string
-                                |> Decode.map (Dict.remove "email")
-                            )
-                            Dict.empty
+                        |> JDP.optional "errors" (Decode.dict Decode.string) Dict.empty
             )
 
 

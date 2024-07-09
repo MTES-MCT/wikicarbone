@@ -361,7 +361,7 @@ viewLoginForm ({ user } as model) =
     Html.form [ onSubmit Login ]
         [ viewInput
             { label = "Adresse e-mail"
-            , type_ = "text"
+            , type_ = "email"
             , id = "email"
             , placeholder = "nom@example.com"
             , required = True
