@@ -48,8 +48,8 @@ db procs =
 decodeRawJsonProcesses : Decoder RawJsonProcesses
 decodeRawJsonProcesses =
     Decode.succeed RawJsonProcesses
-        |> JDP.required "textileProcesses" Decode.string
         |> JDP.required "foodProcesses" Decode.string
+        |> JDP.required "textileProcesses" Decode.string
 
 
 impactDefinitions : Result String Definitions

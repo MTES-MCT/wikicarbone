@@ -36,7 +36,7 @@ import Json.Encode as Encode
 import Request.Version exposing (Version)
 import Set exposing (Set)
 import Static.Db as StaticDb exposing (Db)
-import Static.Json as StaticJson exposing (RawJsonProcesses, rawJsonProcesses)
+import Static.Json exposing (RawJsonProcesses, rawJsonProcesses)
 
 
 type alias Session =
@@ -289,15 +289,8 @@ updateStore update session =
 
 
 authenticated : Session -> User -> RawJsonProcesses -> Session
-authenticated ({ store } as session) user { textileProcesses, foodProcesses } =
-    let
-        newProcesses =
-            { rawJsonProcesses
-                | foodProcesses = foodProcesses
-                , textileProcesses = textileProcesses
-            }
-    in
-    case StaticDb.db newProcesses of
+authenticated ({ store } as session) user rawJsonProcesses =
+    case StaticDb.db rawJsonProcesses of
         Ok db ->
             { session
                 | db = db
@@ -311,7 +304,7 @@ authenticated ({ store } as session) user { textileProcesses, foodProcesses } =
 
 logout : Session -> Session
 logout ({ store } as session) =
-    case StaticDb.db StaticJson.rawJsonProcesses of
+    case StaticDb.db rawJsonProcesses of
         Ok db ->
             { session
                 | store = { store | auth = NotAuthenticated }
