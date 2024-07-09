@@ -3,7 +3,7 @@ module Static.Json exposing
     , countriesJson
     , db
     , impactsJson
-    , processes
+    , rawJsonProcesses
     , transportsJson
     )
 
@@ -83,8 +83,8 @@ transportsJson =
     """%transportsJson%"""
 
 
-processes : RawJsonProcesses
-processes =
+rawJsonProcesses : RawJsonProcesses
+rawJsonProcesses =
     { foodProcesses = foodProcessesJson
     , textileProcesses = textileProcessesJson
     }

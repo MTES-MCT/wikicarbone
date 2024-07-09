@@ -2,7 +2,6 @@ module Static.Db exposing
     ( Db
     , db
     , decodeRawJsonProcesses
-    , processes
     , updateEcotoxWeighting
     , updateProcesses
     )
@@ -56,11 +55,6 @@ decodeRawJsonProcesses =
 impactDefinitions : Result String Definitions
 impactDefinitions =
     Common.impactsFromJson StaticJson.impactsJson
-
-
-processes : StaticJson.RawJsonProcesses
-processes =
-    StaticJson.processes
 
 
 countries : TextileDb.Db -> Result String (List Country)

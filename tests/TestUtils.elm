@@ -8,7 +8,8 @@ import Data.Impact as Impact exposing (Impacts)
 import Data.Impact.Definition as Definition exposing (Trigrams)
 import Data.Unit as Unit
 import Expect exposing (Expectation)
-import Static.Db exposing (Db, db, processes)
+import Static.Db as StaticDb exposing (Db)
+import Static.Json as StaticJson
 import Test exposing (..)
 
 
@@ -19,7 +20,7 @@ asTest label =
 
 suiteWithDb : String -> (Db -> List Test) -> Test
 suiteWithDb name suite =
-    case db processes of
+    case StaticDb.db StaticJson.rawJsonProcesses of
         Ok db ->
             describe name (suite db)
 

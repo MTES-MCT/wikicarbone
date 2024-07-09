@@ -21,7 +21,8 @@ import Ports
 import RemoteData exposing (WebData)
 import Request.Version
 import Route
-import Static.Db as Static exposing (Db)
+import Static.Db as StaticDb exposing (Db)
+import Static.Json as StaticJson
 import Url exposing (Url)
 import Views.Page as Page
 
@@ -88,7 +89,7 @@ init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url navKey =
     setRoute url
         ( { state =
-                case Static.db Static.processes of
+                case StaticDb.db StaticJson.rawJsonProcesses of
                     Ok db ->
                         Loaded (setupSession navKey flags db) LoadingPage
 
@@ -113,7 +114,7 @@ setupSession navKey flags db =
     { db =
         case store.auth of
             Session.Authenticated _ textileProcesses foodProcesses ->
-                db |> Static.updateProcesses foodProcesses textileProcesses
+                db |> StaticDb.updateProcesses foodProcesses textileProcesses
 
             Session.NotAuthenticated ->
                 db
