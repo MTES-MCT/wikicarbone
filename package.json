@@ -8,7 +8,6 @@
   "scripts": {
     "build": "npm run server:build && rimraf dist && npm run build:init && parcel build index.html --public-url ./",
     "build:init": "./bin/update-version.sh && mkdir -p dist && cp -r public/* dist/ && npm run db:build",
-    "processes:build": "elm make src/ComputeAggregated.elm --output=compute-aggregated-app.js && node compute-aggregated.js",
     "db:build": "./bin/build-db",
     "lint:prettier": "prettier --config .prettierrc --check",
     "lint:prettier:all": "npm run lint:prettier -- .",

@@ -6,7 +6,6 @@ module Data.Impact exposing
     , applyComplements
     , complementsImpactAsChartEntries
     , decodeImpacts
-    , decodeWithoutAggregated
     , default
     , divideBy
     , divideComplementsImpactsBy
@@ -44,7 +43,6 @@ import Data.Color as Color
 import Data.Impact.Definition as Definition exposing (Definition, Definitions, Trigram, Trigrams)
 import Data.Unit as Unit
 import Json.Decode as Decode exposing (Decoder)
-import Json.Decode.Pipeline as Pipe
 import Json.Encode as Encode
 import Mass exposing (Mass)
 import Quantity
@@ -421,15 +419,6 @@ updateImpact definitions trigram value =
 decodeImpacts : Decoder Impacts
 decodeImpacts =
     Definition.decodeBase (always Unit.decodeImpact)
-        |> Decode.map Impacts
-
-
-decodeWithoutAggregated : Decoder Impacts
-decodeWithoutAggregated =
-    Definition.decodeWithoutAggregated (always Unit.decodeImpact)
-        -- Those aggregated impacts will have to be computed after the decoding
-        |> Pipe.hardcoded Quantity.zero
-        |> Pipe.hardcoded Quantity.zero
         |> Decode.map Impacts
 
 

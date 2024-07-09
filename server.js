@@ -95,18 +95,35 @@ const apiTracker = lib.setupTracker(openApiContents);
 
 const textileImpactsFile = "public/data/textile/processes_impacts.json";
 const foodImpactsFile = "public/data/food/processes_impacts.json";
-const textileFile = "public/data/textile/processes.json";
-const foodFile = "public/data/food/processes.json";
+
+const foodProcessesString = fs.readFileSync(foodImpactsFile, "utf8");
+const textileProcessesString = fs.readFileSync(textileImpactsFile, "utf8");
 
 const processesImpacts = {
-  foodProcesses: fs.readFileSync(foodImpactsFile, "utf8"),
-  textileProcesses: fs.readFileSync(textileImpactsFile, "utf8"),
+  foodProcesses: foodProcessesString,
+  textileProcesses: textileProcessesString,
 };
 
 const processes = {
-  foodProcesses: fs.readFileSync(foodFile, "utf8"),
-  textileProcesses: fs.readFileSync(textileFile, "utf8"),
+  foodProcesses: removeProcessesImpacts(foodProcessesString),
+  textileProcesses: removeProcessesImpacts(textileProcessesString),
 };
+
+function removeProcessesImpacts(processesImpactsString) {
+  let processesImpactsJSON = JSON.parse(processesImpactsString);
+
+  // Iterate through all the processes
+  for (let process of processesImpactsJSON) {
+    // Iterate through all impacts of the process
+    for (var impactKey of Object.keys(process["impacts"])) {
+      if (impactKey != "ecs" && impactKey != "pef") {
+        process["impacts"][impactKey] = 0;
+      }
+    }
+  }
+
+  return JSON.stringify(processesImpactsJSON);
+}
 
 const getProcesses = async (token) => {
   let isTokenValid = false;
