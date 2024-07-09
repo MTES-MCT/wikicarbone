@@ -1,5 +1,6 @@
 module Request.Auth exposing
     ( AuthResponse(..)
+    , Errors
     , login
     , logout
     , processes
@@ -11,6 +12,7 @@ import Data.User as User exposing (User)
 import Dict exposing (Dict)
 import Http
 import Json.Decode as Decode exposing (Decoder)
+import Json.Decode.Pipeline as JDP
 import Json.Encode as Encode
 import Static.Db as Db
 import Static.Json exposing (RawJsonProcesses)
@@ -22,7 +24,7 @@ type alias Errors =
 
 type AuthResponse
     = SuccessResponse String
-    | ErrorResponse String (Maybe Errors)
+    | ErrorResponse String Errors
 
 
 decodeAuthResponse : Decoder AuthResponse
@@ -35,13 +37,13 @@ decodeAuthResponse =
                         |> Decode.map SuccessResponse
 
                 else
-                    Decode.map2 ErrorResponse
-                        (Decode.field "msg" Decode.string)
-                        (Decode.maybe
-                            (Decode.field "errors" (Decode.dict Decode.string)
+                    Decode.succeed ErrorResponse
+                        |> JDP.required "msg" Decode.string
+                        |> JDP.optional "errors"
+                            (Decode.dict Decode.string
                                 |> Decode.map (Dict.remove "email")
                             )
-                        )
+                            Dict.empty
             )
 
 
@@ -49,7 +51,7 @@ login : (Result Http.Error AuthResponse -> msg) -> String -> Cmd msg
 login event email =
     Http.post
         { url = "/accounts/login/"
-        , body = Http.jsonBody (Encode.string email)
+        , body = Http.jsonBody (Encode.object [ ( "email", Encode.string email ) ])
         , expect = Http.expectJson event decodeAuthResponse
         }
 
