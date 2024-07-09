@@ -52,7 +52,7 @@ init : Session -> { authenticated : Bool } -> ( Model, Session, Cmd Msg )
 init session data =
     ( emptyModel data
     , session
-    , AuthRequest.user GotProfile
+    , AuthRequest.profile GotProfile
     )
 
 

@@ -4,8 +4,8 @@ module Request.Auth exposing
     , login
     , logout
     , processes
+    , profile
     , register
-    , user
     )
 
 import Data.User as User exposing (User)
@@ -54,14 +54,10 @@ login event email =
 
 logout : msg -> Cmd msg
 logout event =
-    Http.riskyRequest
-        { method = "POST"
-        , headers = []
-        , url = "/accounts/logout/"
+    Http.post
+        { url = "/accounts/logout/"
         , body = Http.emptyBody
         , expect = Http.expectWhatever (always event)
-        , timeout = Nothing
-        , tracker = Nothing
         }
 
 
@@ -78,23 +74,18 @@ processes event token =
         }
 
 
+profile : (Result Http.Error User -> msg) -> Cmd msg
+profile event =
+    Http.get
+        { url = "/accounts/profile/"
+        , expect = Http.expectJson event User.decode
+        }
+
+
 register : (Result Http.Error AuthResponse -> msg) -> Encode.Value -> Cmd msg
 register event userForm =
     Http.post
         { url = "/accounts/register/"
         , body = Http.jsonBody userForm
         , expect = Http.expectJson event decodeAuthResponse
-        }
-
-
-user : (Result Http.Error User -> msg) -> Cmd msg
-user event =
-    Http.riskyRequest
-        { method = "GET"
-        , headers = []
-        , url = "/accounts/profile/"
-        , body = Http.emptyBody
-        , expect = Http.expectJson event User.decode
-        , timeout = Nothing
-        , tracker = Nothing
         }
