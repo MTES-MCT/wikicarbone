@@ -1,6 +1,7 @@
 module Request.Auth exposing
     ( AuthResponse(..)
     , login
+    , logout
     , processes
     , register
     , user
@@ -50,6 +51,19 @@ login event email =
         { url = "/accounts/login/"
         , body = Http.jsonBody (Encode.string email)
         , expect = Http.expectJson event decodeAuthResponse
+        }
+
+
+logout : msg -> Cmd msg
+logout event =
+    Http.riskyRequest
+        { method = "POST"
+        , headers = []
+        , url = "/accounts/logout/"
+        , body = Http.emptyBody
+        , expect = Http.expectWhatever (always event)
+        , timeout = Nothing
+        , tracker = Nothing
         }
 
 

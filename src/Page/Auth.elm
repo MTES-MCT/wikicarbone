@@ -149,14 +149,10 @@ update session msg model =
             )
 
         Logout ->
-            let
-                newSession =
-                    Session.logout session
-                        |> Session.notifyInfo "Vous êtes désormais déconnecté" "Vous n'avez plus accès au détail des impacts."
-            in
             ( model
-            , newSession
-            , logout
+            , Session.logout session
+                |> Session.notifyInfo "Vous êtes désormais déconnecté" "Vous n'avez plus accès au détail des impacts."
+            , AuthRequest.logout LoggedOut
             )
 
         TokenEmailSent response ->
@@ -512,19 +508,6 @@ viewFormErrors maybeResponse =
 
 
 ---- helpers
-
-
-logout : Cmd Msg
-logout =
-    Http.riskyRequest
-        { method = "POST"
-        , headers = []
-        , url = "/accounts/logout/"
-        , body = Http.emptyBody
-        , expect = Http.expectWhatever (always LoggedOut)
-        , timeout = Nothing
-        , tracker = Nothing
-        }
 
 
 getFormInputError : String -> Maybe AuthRequest.AuthResponse -> Maybe String
