@@ -1,13 +1,60 @@
-module Request.Auth exposing (processes, user)
+module Request.Auth exposing
+    ( AuthResponse(..)
+    , login
+    , processes
+    , register
+    , user
+    )
 
 import Data.User as User exposing (User)
+import Dict exposing (Dict)
 import Http
+import Json.Decode as Decode exposing (Decoder)
+import Json.Encode as Encode
 import Static.Db as Db
 import Static.Json exposing (RawJsonProcesses)
 
 
-processes : String -> (Result Http.Error RawJsonProcesses -> msg) -> Cmd msg
-processes token event =
+type alias Errors =
+    Dict String String
+
+
+type AuthResponse
+    = SuccessResponse String
+    | ErrorResponse String (Maybe Errors)
+
+
+decodeAuthResponse : Decoder AuthResponse
+decodeAuthResponse =
+    Decode.field "success" Decode.bool
+        |> Decode.andThen
+            (\success ->
+                if success then
+                    Decode.field "msg" Decode.string
+                        |> Decode.map SuccessResponse
+
+                else
+                    Decode.map2 ErrorResponse
+                        (Decode.field "msg" Decode.string)
+                        (Decode.maybe
+                            (Decode.field "errors" (Decode.dict Decode.string)
+                                |> Decode.map (Dict.remove "email")
+                            )
+                        )
+            )
+
+
+login : (Result Http.Error AuthResponse -> msg) -> String -> Cmd msg
+login event email =
+    Http.post
+        { url = "/accounts/login/"
+        , body = Http.jsonBody (Encode.string email)
+        , expect = Http.expectJson event decodeAuthResponse
+        }
+
+
+processes : (Result Http.Error RawJsonProcesses -> msg) -> String -> Cmd msg
+processes event token =
     Http.request
         { method = "GET"
         , url = "processes/processes.json"
@@ -16,6 +63,15 @@ processes token event =
         , expect = Http.expectJson event Db.decodeRawJsonProcesses
         , timeout = Nothing
         , tracker = Nothing
+        }
+
+
+register : (Result Http.Error AuthResponse -> msg) -> Encode.Value -> Cmd msg
+register event userForm =
+    Http.post
+        { url = "/accounts/register/"
+        , body = Http.jsonBody userForm
+        , expect = Http.expectJson event decodeAuthResponse
         }
 
 

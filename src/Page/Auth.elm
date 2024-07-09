@@ -9,14 +9,12 @@ module Page.Auth exposing
 import Data.Env as Env
 import Data.Session as Session exposing (Session)
 import Data.User as User exposing (User)
-import Dict exposing (Dict)
+import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Http
-import Json.Decode as Decode exposing (Decoder)
-import Json.Encode as Encode
-import Request.Auth
+import Request.Auth as AuthRequest
 import Request.Common as RequestCommon
 import Route
 import Static.Json exposing (RawJsonProcesses)
@@ -27,7 +25,7 @@ import Views.Markdown as Markdown
 
 type alias Model =
     { user : User
-    , response : Maybe Response
+    , response : Maybe AuthRequest.AuthResponse
     , action : Action
     , authenticated : Bool
     }
@@ -41,7 +39,7 @@ type Msg
     | LoggedOut
     | Login
     | Logout
-    | TokenEmailSent (Result Http.Error Response)
+    | TokenEmailSent (Result Http.Error AuthRequest.AuthResponse)
     | UpdateForm Model
 
 
@@ -50,20 +48,11 @@ type Action
     | Authenticate
 
 
-type alias Errors =
-    Dict String String
-
-
-type Response
-    = Success String
-    | Error String (Maybe Errors)
-
-
 init : Session -> { authenticated : Bool } -> ( Model, Session, Cmd Msg )
 init session data =
     ( emptyModel data
     , session
-    , Request.Auth.user GotProfile
+    , AuthRequest.user GotProfile
     )
 
 
@@ -101,14 +90,9 @@ update session msg model =
         AskForRegistration ->
             ( model
             , session
-            , Http.post
-                { url = "/accounts/register/"
-                , body =
-                    User.form model.user
-                        |> User.encodeForm
-                        |> Http.jsonBody
-                , expect = Http.expectJson TokenEmailSent decodeResponse
-                }
+            , User.form model.user
+                |> User.encodeForm
+                |> AuthRequest.register TokenEmailSent
             )
 
         Authenticated user (Ok newProcessesJson) ->
@@ -135,7 +119,8 @@ update session msg model =
         GotProfile (Ok user) ->
             ( { model | user = user }
             , session
-            , Request.Auth.processes user.token (Authenticated user)
+            , user.token
+                |> AuthRequest.processes (Authenticated user)
             )
 
         GotProfile (Err err) ->
@@ -160,11 +145,7 @@ update session msg model =
         Login ->
             ( model
             , session
-            , Http.post
-                { url = "/accounts/login/"
-                , body = Http.jsonBody (encodeEmail model.user.email)
-                , expect = Http.expectJson TokenEmailSent decodeResponse
-                }
+            , AuthRequest.login TokenEmailSent model.user.email
             )
 
         Logout ->
@@ -338,7 +319,7 @@ viewInput :
     , value : String
     , onInput : String -> Msg
     }
-    -> Maybe Response
+    -> Maybe AuthRequest.AuthResponse
     -> Html Msg
 viewInput inputData maybeResponse =
     let
@@ -373,7 +354,7 @@ viewInput inputData maybeResponse =
 viewLoginForm : Model -> Html Msg
 viewLoginForm ({ user } as model) =
     case model.response of
-        Just (Success msg) ->
+        Just (AuthRequest.SuccessResponse msg) ->
             div []
                 [ p [] [ Html.text "Si vous êtes inscrit(e), un email vous a été envoyé avec un lien de connexion." ]
                 , p [] [ Html.text msg ]
@@ -389,13 +370,7 @@ viewLoginForm ({ user } as model) =
                     , placeholder = "nom@example.com"
                     , required = True
                     , value = user.email
-                    , onInput =
-                        \email ->
-                            UpdateForm
-                                { model
-                                    | user = { user | email = email }
-                                    , response = removeError model.response
-                                }
+                    , onInput = \email -> UpdateForm { model | user = { user | email = email } }
                     }
                     model.response
                 , button
@@ -410,7 +385,7 @@ viewLoginForm ({ user } as model) =
 viewRegisterForm : Model -> Html Msg
 viewRegisterForm ({ user } as model) =
     case model.response of
-        Just (Success msg) ->
+        Just (AuthRequest.SuccessResponse msg) ->
             div []
                 [ p [] [ Html.text "Un email vous a été envoyé avec un lien de validation." ]
                 , p [] [ Html.text msg ]
@@ -429,13 +404,7 @@ viewRegisterForm ({ user } as model) =
                                 , placeholder = "nom@example.com"
                                 , required = True
                                 , value = user.email
-                                , onInput =
-                                    \email ->
-                                        UpdateForm
-                                            { model
-                                                | user = { user | email = email }
-                                                , response = removeError model.response
-                                            }
+                                , onInput = \email -> UpdateForm { model | user = { user | email = email } }
                                 }
                                 model.response
                             ]
@@ -447,13 +416,7 @@ viewRegisterForm ({ user } as model) =
                                 , placeholder = "ACME SARL"
                                 , required = False
                                 , value = user.company
-                                , onInput =
-                                    \company ->
-                                        UpdateForm
-                                            { model
-                                                | user = { user | company = company }
-                                                , response = removeError model.response
-                                            }
+                                , onInput = \company -> UpdateForm { model | user = { user | company = company } }
                                 }
                                 model.response
                             ]
@@ -467,13 +430,7 @@ viewRegisterForm ({ user } as model) =
                                 , placeholder = "Joséphine"
                                 , required = True
                                 , value = user.firstname
-                                , onInput =
-                                    \firstname ->
-                                        UpdateForm
-                                            { model
-                                                | user = { user | firstname = firstname }
-                                                , response = removeError model.response
-                                            }
+                                , onInput = \firstname -> UpdateForm { model | user = { user | firstname = firstname } }
                                 }
                                 model.response
                             ]
@@ -485,13 +442,7 @@ viewRegisterForm ({ user } as model) =
                                 , placeholder = "Durand"
                                 , required = True
                                 , value = user.lastname
-                                , onInput =
-                                    \lastname ->
-                                        UpdateForm
-                                            { model
-                                                | user = { user | lastname = lastname }
-                                                , response = removeError model.response
-                                            }
+                                , onInput = \lastname -> UpdateForm { model | user = { user | lastname = lastname } }
                                 }
                                 model.response
                             ]
@@ -508,14 +459,7 @@ viewRegisterForm ({ user } as model) =
                                 , id "terms_of_use"
                                 , required True
                                 , checked user.cgu
-                                , onCheck
-                                    (\isChecked ->
-                                        UpdateForm
-                                            { model
-                                                | user = { user | cgu = isChecked }
-                                                , response = removeError model.response
-                                            }
-                                    )
+                                , onCheck (\isChecked -> UpdateForm { model | user = { user | cgu = isChecked } })
                                 ]
                                 []
                             , div []
@@ -553,10 +497,10 @@ viewRegisterForm ({ user } as model) =
                 ]
 
 
-viewFormErrors : Maybe Response -> Html Msg
+viewFormErrors : Maybe AuthRequest.AuthResponse -> Html Msg
 viewFormErrors maybeResponse =
     case maybeResponse of
-        Just (Error errorMsg Nothing) ->
+        Just (AuthRequest.ErrorResponse errorMsg Nothing) ->
             -- No field errors, we display some general error message
             div [ class "text-danger" ]
                 [ text errorMsg
@@ -583,55 +527,15 @@ logout =
         }
 
 
-getFormInputError : String -> Maybe Response -> Maybe String
+getFormInputError : String -> Maybe AuthRequest.AuthResponse -> Maybe String
 getFormInputError inputId =
     Maybe.andThen
         (\response ->
             case response of
-                Success _ ->
+                AuthRequest.SuccessResponse _ ->
                     Nothing
 
-                Error _ maybeErrors ->
+                AuthRequest.ErrorResponse _ maybeErrors ->
                     maybeErrors
                         |> Maybe.andThen (Dict.get inputId)
         )
-
-
-removeError : Maybe Response -> Maybe Response
-removeError =
-    Maybe.map
-        (\response ->
-            case response of
-                Success _ ->
-                    response
-
-                Error errorMsg maybeErrors ->
-                    maybeErrors
-                        |> Maybe.map (Dict.remove "email")
-                        |> Error errorMsg
-        )
-
-
-
----- encoders/decoders
-
-
-decodeResponse : Decoder Response
-decodeResponse =
-    Decode.field "success" Decode.bool
-        |> Decode.andThen
-            (\success ->
-                if success then
-                    Decode.field "msg" Decode.string
-                        |> Decode.map Success
-
-                else
-                    Decode.map2 Error
-                        (Decode.field "msg" Decode.string)
-                        (Decode.maybe (Decode.field "errors" (Decode.dict Decode.string)))
-            )
-
-
-encodeEmail : String -> Encode.Value
-encodeEmail email =
-    Encode.object [ ( "email", Encode.string email ) ]
