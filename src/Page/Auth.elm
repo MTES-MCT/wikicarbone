@@ -329,7 +329,7 @@ viewInput :
 viewInput inputData formErrors =
     let
         error =
-            getInputError inputData.id formErrors
+            Dict.get inputData.id formErrors
     in
     div [ class "mb-3" ]
         [ label
@@ -442,7 +442,7 @@ viewRegistrationForm ({ user } as model) =
                     [ input
                         [ type_ "checkbox"
                         , class "form-check-input"
-                        , classList [ ( "is-invalid", getInputError "terms_of_use" model.formErrors /= Nothing ) ]
+                        , classList [ ( "is-invalid", Dict.get "terms_of_use" model.formErrors /= Nothing ) ]
                         , id "terms_of_use"
                         , required True
                         , checked user.cgu
@@ -455,7 +455,7 @@ viewRegistrationForm ({ user } as model) =
                             |> Markdown.simple []
                         ]
                     , div [ class "text-danger" ]
-                        [ getInputError "terms_of_use" model.formErrors
+                        [ Dict.get "terms_of_use" model.formErrors
                             |> Maybe.withDefault ""
                             |> text
                         ]
@@ -482,8 +482,3 @@ viewRegistrationForm ({ user } as model) =
                 ]
             ]
         ]
-
-
-getInputError : String -> AuthRequest.Errors -> Maybe String
-getInputError id formErrors =
-    Dict.get id formErrors
