@@ -600,7 +600,10 @@ viewMaterials config =
                         , id "add-new-element"
                         , availableMaterials
                             |> List.sortBy .shortName
-                            |> AutocompleteSelector.init .shortName
+                            |> AutocompleteSelector.init
+                                (\{ name, shortName, materialProcess } ->
+                                    name ++ " " ++ shortName ++ " " ++ materialProcess.name
+                                )
                             |> config.addMaterialModal Nothing
                             |> config.setModal
                             |> onClick

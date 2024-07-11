@@ -578,7 +578,7 @@ q {
     &.selected,
     &:hover {
       color: #fff !important;
-      span {
+      small, span {
         color: #fff !important;
       }
     }

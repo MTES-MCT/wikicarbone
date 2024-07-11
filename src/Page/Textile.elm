@@ -1171,8 +1171,9 @@ view session model =
                                 , onAutocompleteSelect = OnAutocompleteSelect
                                 , placeholderText = "tapez ici le nom de la matière première pour la rechercher"
                                 , title = "Sélectionnez une matière première"
-                                , toLabel = .shortName
                                 , toCategory = .origin >> Origin.toLabel
+                                , toDescription = Nothing
+                                , toLabel = .shortName
                                 }
 
                         ConfirmSwitchToRegulatoryModal ->
@@ -1213,8 +1214,9 @@ view session model =
                                 , onAutocompleteSelect = OnAutocompleteSelect
                                 , placeholderText = "tapez ici le nom du produit pour le rechercher"
                                 , title = "Sélectionnez un produit"
-                                , toLabel = Example.toName session.db.textile.examples
                                 , toCategory = Example.toCategory session.db.textile.examples
+                                , toDescription = Nothing
+                                , toLabel = Example.toName session.db.textile.examples
                                 }
 
                         SelectProductModal autocompleteState ->
@@ -1236,8 +1238,9 @@ view session model =
                                 , onAutocompleteSelect = OnAutocompleteSelect
                                 , placeholderText = "tapez ici une catégorie pour la rechercher"
                                 , title = "Sélectionnez une catégorie de produit"
-                                , toLabel = .name
                                 , toCategory = always ""
+                                , toDescription = Nothing
+                                , toLabel = .name
                                 }
                     ]
 

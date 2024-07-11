@@ -16,13 +16,24 @@ type alias Config element msg =
     , onAutocompleteSelect : msg
     , placeholderText : String
     , title : String
-    , toLabel : element -> String
     , toCategory : element -> String
+    , toDescription : Maybe (element -> String)
+    , toLabel : element -> String
     }
 
 
 view : Config element msg -> Html msg
 view ({ autocompleteState, closeModal, footer, noOp, onAutocomplete, onAutocompleteSelect, placeholderText, title } as config) =
+    let
+        { query, choices, selectedIndex } =
+            Autocomplete.viewState autocompleteState
+
+        { inputEvents, choiceEvents } =
+            AutocompleteView.events
+                { onSelect = onAutocompleteSelect
+                , mapHtml = onAutocomplete
+                }
+    in
     ModalView.view
         { size = ModalView.Large
         , close = closeModal
@@ -31,16 +42,6 @@ view ({ autocompleteState, closeModal, footer, noOp, onAutocomplete, onAutocompl
         , subTitle = Nothing
         , formAction = Nothing
         , content =
-            let
-                { query, choices, selectedIndex } =
-                    Autocomplete.viewState autocompleteState
-
-                { inputEvents, choiceEvents } =
-                    AutocompleteView.events
-                        { onSelect = onAutocompleteSelect
-                        , mapHtml = onAutocomplete
-                        }
-            in
             [ input
                 (inputEvents
                     ++ [ type_ "search"
@@ -64,15 +65,14 @@ view ({ autocompleteState, closeModal, footer, noOp, onAutocomplete, onAutocompl
 
 
 renderChoice : Config element msg -> (Int -> List (Attribute msg)) -> Maybe Int -> Int -> element -> Html msg
-renderChoice { toLabel, toCategory } events selectedIndex_ index element =
+renderChoice { toCategory, toDescription, toLabel } events selectedIndex index element =
     let
         selected =
-            Autocomplete.isSelected selectedIndex_ index
+            Autocomplete.isSelected selectedIndex index
     in
     button
         (events index
-            ++ [ class "AutocompleteChoice"
-               , class "d-flex justify-content-between align-items-center gap-1 w-100"
+            ++ [ class "AutocompleteChoice w-100"
                , class "btn btn-outline-primary border-0 border-bottom text-start no-outline"
                , classList [ ( "btn-primary selected", selected ) ]
                , attribute "role" "option"
@@ -85,7 +85,16 @@ renderChoice { toLabel, toCategory } events selectedIndex_ index element =
                     )
                ]
         )
-        [ span [ class "text-nowrap" ] [ text <| toLabel element ]
-        , span [ class "text-muted fs-8 text-truncate" ]
-            [ text <| toCategory element ]
+        [ div [ class "d-flex justify-content-between align-items-center gap-1" ]
+            [ span [ class "text-nowrap" ] [ text <| toLabel element ]
+            , span [ class "text-muted fs-8 text-truncate" ]
+                [ text <| toCategory element ]
+            ]
+        , case toDescription of
+            Just fn ->
+                small [ class "text-muted fs-8 text-truncate" ]
+                    [ text (fn element) ]
+
+            Nothing ->
+                text ""
         ]
