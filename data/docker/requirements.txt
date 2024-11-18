@@ -8,11 +8,11 @@ flatdict>=4.0, <4.1
 frozendict
 fs
 git+https://github.com/brightway-lca/brightway2-analyzer@0.11.7
-git+https://github.com/brightway-lca/brightway2-calc@2.0.dev17
-git+https://github.com/brightway-lca/brightway2-data@4.0.dev42
+git+https://github.com/brightway-lca/brightway2-calc@2.0.dev23
+git+https://github.com/brightway-lca/brightway2-data@4.0.dev60
 git+https://github.com/brightway-lca/brightway2-parameters@1.1.0
 git+https://github.com/brightway-lca/bw_projects@v2.1.0
-git+https://github.com/ccomb/brightway2-io@ccomb-6
+git+https://github.com/ccomb/brightway2-io@ccomb-7
 ipywidgets>=8.1, <8.2
 jupyter-collaboration>=2.0, <2.1
 matplotlib>=3.7, <3.8
