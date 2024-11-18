@@ -17,10 +17,9 @@ git+https://github.com/brightway-lca/brightway2-io@0.9.dev41
 ipywidgets>=8.1, <8.2
 jupyter-collaboration>=2.0, <2.1
 matplotlib>=3.7, <3.8
-numpy>=1.25, <1.26
-olca-ipc==0.0.12
-pandas>=2.0, <2.1
-scipy>=1.11, <1.12
+numpy>=1.26, <1.27
+pandas>=2.2, <2.3
+scipy>=1.14, <1.15
 uvicorn
 xlrd>=2.0, <2.1
 loguru>=0.7.2, <0.8
