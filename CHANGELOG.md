@@ -1,6 +1,20 @@
 # Changelog
 
 
+## [3.0.1](https://github.com/MTES-MCT/ecobalyse/compare/v3.0.0..v3.0.1) (2025-01-13)
+
+
+
+### 🚜 Refactor
+
+- Improve YAML gh action legibility. ([#896](https://github.com/MTES-MCT/ecobalyse/issues/896))
+
+### ⚙️ Miscellaneous Tasks
+
+- Add python build libs to .gitignore. ([#895](https://github.com/MTES-MCT/ecobalyse/issues/895))
+- Update data files ([#889](https://github.com/MTES-MCT/ecobalyse/issues/889))
+
+
 ## [3.0.0](https://github.com/MTES-MCT/ecobalyse/compare/v2.7.0..v3.0.0) (2025-01-13)
 
 
@@ -30,6 +44,7 @@
 - Warn on session data decoding error. ([#884](https://github.com/MTES-MCT/ecobalyse/issues/884))
 - *(textile)* Apply durability to trims impacts. ([#886](https://github.com/MTES-MCT/ecobalyse/issues/886))
 - Update PEF score label. ([#887](https://github.com/MTES-MCT/ecobalyse/issues/887))
+- Add missing env and allow workflow dispatch for release creation ([#892](https://github.com/MTES-MCT/ecobalyse/issues/892))
 
 ### 🚜 Refactor
 
