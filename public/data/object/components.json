@@ -4,8 +4,10 @@
     "name": "Pied 70 cm (plein bois)",
     "processes": [
       {
-        "amount": 0.00022,
-        "process_id": "07e9e916-e02b-45e2-a298-2b5084de6242"
+        "material": {
+          "amount": 0.00022,
+          "process_id": "07e9e916-e02b-45e2-a298-2b5084de6242"
+        }
       }
     ]
   },
@@ -14,8 +16,10 @@
     "name": "Dossier plastique (PP)",
     "processes": [
       {
-        "amount": 0.734063,
-        "process_id": "3295b2a5-328a-4c00-b046-e2ddeb0da823"
+        "material": {
+          "amount": 0.734063,
+          "process_id": "3295b2a5-328a-4c00-b046-e2ddeb0da823"
+        }
       }
     ]
   },
@@ -24,8 +28,10 @@
     "name": "Assise plastique (PP)",
     "processes": [
       {
-        "amount": 0.91125,
-        "process_id": "3295b2a5-328a-4c00-b046-e2ddeb0da823"
+        "material": {
+          "amount": 0.91125,
+          "process_id": "3295b2a5-328a-4c00-b046-e2ddeb0da823"
+        }
       }
     ]
   },
@@ -34,8 +40,10 @@
     "name": "Pied 90 cm (plein bois)",
     "processes": [
       {
-        "amount": 0.007065,
-        "process_id": "07e9e916-e02b-45e2-a298-2b5084de6242"
+        "material": {
+          "amount": 0.007065,
+          "process_id": "07e9e916-e02b-45e2-a298-2b5084de6242"
+        }
       }
     ]
   },
@@ -44,8 +52,10 @@
     "name": "Plateau 200x100 (chêne)",
     "processes": [
       {
-        "amount": 0.14,
-        "process_id": "07e9e916-e02b-45e2-a298-2b5084de6242"
+        "material": {
+          "amount": 0.14,
+          "process_id": "07e9e916-e02b-45e2-a298-2b5084de6242"
+        }
       }
     ]
   },
@@ -54,8 +64,10 @@
     "name": "Cadre plastique",
     "processes": [
       {
-        "amount": 35,
-        "process_id": "3295b2a5-328a-4c00-b046-e2ddeb0da823"
+        "material": {
+          "amount": 35,
+          "process_id": "3295b2a5-328a-4c00-b046-e2ddeb0da823"
+        }
       }
     ]
   }
