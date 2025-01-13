@@ -53,7 +53,7 @@
     "test": "npm run test:client && npm run test:backend && npm run test:server"
   },
   "dependencies": {
-    "@sentry/browser": "^8.44.0",
+    "@sentry/browser": "^8.46.0",
     "@sentry/node": "^8.44.0",
     "@sentry/profiling-node": "^8.44.0",
     "@sentry/tracing": "^7.119.0",
