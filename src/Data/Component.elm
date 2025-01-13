@@ -3,6 +3,7 @@ module Data.Component exposing
     , Component
     , ComponentItem
     , DataContainer
+    , ExpandedProcessItem
     , Id
     , ProcessItem
     , Quantity
@@ -77,6 +78,13 @@ type alias ProcessItem =
     { amount : Amount
     , material : Process.Id
     , transform : Maybe Process.Id
+    }
+
+
+type alias ExpandedProcessItem =
+    { amount : Amount
+    , material : Process
+    , transform : Maybe Process
     }
 
 
@@ -221,7 +229,7 @@ decodeListFromJsonString =
 expandComponentItems :
     DataContainer a
     -> List ComponentItem
-    -> Result String (List ( Quantity, Component, List ( Amount, Process ) ))
+    -> Result String (List ( Quantity, Component, List ExpandedProcessItem ))
 expandComponentItems { components, processes } =
     List.map
         (\{ id, quantity } ->
@@ -238,11 +246,21 @@ expandComponentItems { components, processes } =
 
 {-| Take a list of process items and resolve them with actual processes
 -}
-expandProcessItems : List Process -> List ProcessItem -> Result String (List ( Amount, Process ))
+expandProcessItems : List Process -> List ProcessItem -> Result String (List ExpandedProcessItem)
 expandProcessItems processes =
-    List.map (\{ amount, material } -> ( amount, material ))
-        >> List.map (RE.combineMapSecond (\id -> Process.findById id processes))
-        >> RE.combine
+    RE.combineMap
+        (\{ amount, material, transform } ->
+            Ok (ExpandedProcessItem amount)
+                |> RE.andMap (Process.findById material processes)
+                |> RE.andMap
+                    (case transform of
+                        Just id ->
+                            Process.findById id processes |> Result.map Just
+
+                        Nothing ->
+                            Ok Nothing
+                    )
+        )
 
 
 decode : Decoder Component

@@ -56,11 +56,11 @@ table db { detailed, scope } =
                             Ok list ->
                                 list
                                     |> List.map
-                                        (\( amount, process ) ->
+                                        (\{ amount, material } ->
                                             String.fromFloat (Component.amountToFloat amount)
-                                                ++ process.unit
+                                                ++ material.unit
                                                 ++ " de "
-                                                ++ Process.getDisplayName process
+                                                ++ Process.getDisplayName material
                                         )
                                     |> String.join ", "
           , toCell =
@@ -77,10 +77,10 @@ table db { detailed, scope } =
                         Ok list ->
                             list
                                 |> List.map
-                                    (\( amount, process ) ->
+                                    (\{ amount, material } ->
                                         li []
-                                            [ Format.amount process amount
-                                            , text <| " de " ++ Process.getDisplayName process
+                                            [ Format.amount material amount
+                                            , text <| " de " ++ Process.getDisplayName material
                                             ]
                                     )
                                 |> List.intersperse (text ", ")
