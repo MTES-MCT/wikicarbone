@@ -3,6 +3,7 @@ module Data.Component exposing
     , Component
     , ComponentItem
     , DataContainer
+    , ExpandedProcessItem
     , Id
     , ProcessItem
     , Quantity
@@ -29,6 +30,7 @@ module Data.Component exposing
     , quantityToInt
     )
 
+import Data.Common.DecodeUtils as DU
 import Data.Impact as Impact exposing (Impacts)
 import Data.Process as Process exposing (Process)
 import Data.Uuid as Uuid exposing (Uuid)
@@ -70,11 +72,19 @@ type alias DataContainer db =
     }
 
 
-{-| A compact representation of a component process and an amount of it
+{-| A compact representation of an amount of material and an optional transformation of it
 -}
 type alias ProcessItem =
     { amount : Amount
-    , processId : Process.Id
+    , material : Process.Id
+    , transform : Maybe Process.Id
+    }
+
+
+type alias ExpandedProcessItem =
+    { amount : Amount
+    , material : Process
+    , transform : Maybe Process
     }
 
 
@@ -182,9 +192,9 @@ computeComponentItemResults { components, processes } { id, quantity } =
 
 
 computeProcessItemResults : List Process -> ProcessItem -> Result String Results
-computeProcessItemResults processes { amount, processId } =
+computeProcessItemResults processes { amount, material } =
     processes
-        |> Process.findById processId
+        |> Process.findById material
         |> Result.map
             (\process ->
                 let
@@ -219,7 +229,7 @@ decodeListFromJsonString =
 expandComponentItems :
     DataContainer a
     -> List ComponentItem
-    -> Result String (List ( Quantity, Component, List ( Amount, Process ) ))
+    -> Result String (List ( Quantity, Component, List ExpandedProcessItem ))
 expandComponentItems { components, processes } =
     List.map
         (\{ id, quantity } ->
@@ -236,11 +246,21 @@ expandComponentItems { components, processes } =
 
 {-| Take a list of process items and resolve them with actual processes
 -}
-expandProcessItems : List Process -> List ProcessItem -> Result String (List ( Amount, Process ))
+expandProcessItems : List Process -> List ProcessItem -> Result String (List ExpandedProcessItem)
 expandProcessItems processes =
-    List.map (\{ amount, processId } -> ( amount, processId ))
-        >> List.map (RE.combineMapSecond (\id -> Process.findById id processes))
-        >> RE.combine
+    RE.combineMap
+        (\{ amount, material, transform } ->
+            Ok (ExpandedProcessItem amount)
+                |> RE.andMap (Process.findById material processes)
+                |> RE.andMap
+                    (case transform of
+                        Just id ->
+                            Process.findById id processes |> Result.map Just
+
+                        Nothing ->
+                            Ok Nothing
+                    )
+        )
 
 
 decode : Decoder Component
@@ -267,7 +287,8 @@ decodeProcessItem : Decoder ProcessItem
 decodeProcessItem =
     Decode.succeed ProcessItem
         |> Decode.required "amount" (Decode.map Amount Decode.float)
-        |> Decode.required "process_id" Process.decodeId
+        |> Decode.required "material" Process.decodeId
+        |> DU.strictOptional "transform" Process.decodeId
 
 
 encodeComponentItem : ComponentItem -> Encode.Value
@@ -305,7 +326,7 @@ idToString (Id uuid) =
 processItemToString : List Process -> ProcessItem -> Result String String
 processItemToString processes processItem =
     processes
-        |> Process.findById processItem.processId
+        |> Process.findById processItem.material
         |> Result.map
             (\process ->
                 String.fromFloat (amountToFloat processItem.amount)

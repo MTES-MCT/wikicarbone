@@ -2,10 +2,10 @@ module Views.Component exposing (editorView)
 
 import Autocomplete exposing (Autocomplete)
 import Data.AutocompleteSelector as AutocompleteSelector
-import Data.Component as Component exposing (Component, ComponentItem)
+import Data.Component as Component exposing (Component, ComponentItem, ExpandedProcessItem)
 import Data.Dataset as Dataset
 import Data.Impact.Definition exposing (Definition)
-import Data.Process as Process exposing (Process)
+import Data.Process as Process
 import Data.Scope exposing (Scope)
 import Html exposing (..)
 import Html.Attributes as Attr exposing (..)
@@ -62,7 +62,7 @@ addButton { addLabel, db, items, openSelectModal } =
 
 componentView :
     Config db msg
-    -> ( Component.Quantity, Component, List ( Component.Amount, Process ) )
+    -> ( Component.Quantity, Component, List ExpandedProcessItem )
     -> Component.Results
     -> List (Html msg)
 componentView config ( quantity, component, processAmounts ) itemResults =
@@ -192,16 +192,16 @@ editorView ({ db, items, results, scope, title } as config) =
         ]
 
 
-processView : Definition -> ( Component.Amount, Process ) -> Component.Results -> Html msg
-processView selectedImpact ( amount, process ) itemResults =
+processView : Definition -> ExpandedProcessItem -> Component.Results -> Html msg
+processView selectedImpact { amount, material } itemResults =
     tr [ class "fs-7" ]
         [ td [] []
         , td [ class "text-end text-nowrap" ]
-            [ Format.amount process amount ]
+            [ Format.amount material amount ]
         , td [ class "align-middle text-truncate w-100" ]
-            [ text <| Process.getDisplayName process ]
+            [ text <| Process.getDisplayName material ]
         , td [ class "align-middle text-end text-nowrap" ]
-            [ Format.density process ]
+            [ Format.density material ]
         , td [ class "text-end align-middle text-nowrap" ]
             [ Format.kg <| Component.extractMass itemResults ]
         , td [ class "text-end align-middle text-nowrap" ]
