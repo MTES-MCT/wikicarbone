@@ -141,13 +141,13 @@ getAquaticPollutionRatio : AquaticPollutionScenario -> Split
 getAquaticPollutionRatio scenario =
     case scenario of
         Average ->
-            Split.fromPercent 36 |> Result.withDefault Split.full
+            Split.fromPercent 19 |> Result.withDefault Split.full
 
         Best ->
             Split.tenth
 
         Worst ->
-            Split.fromPercent 65 |> Result.withDefault Split.full
+            Split.fromPercent 37 |> Result.withDefault Split.full
 
 
 isEuropeOrTurkey : Country -> Bool
