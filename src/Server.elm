@@ -21,6 +21,7 @@ import Data.Textile.Material as Material exposing (Material)
 import Data.Textile.Product as TextileProduct exposing (Product)
 import Data.Textile.Query as TextileQuery
 import Data.Textile.Simulator as Simulator exposing (Simulator)
+import Data.Textile.WellKnown exposing (WellKnown)
 import Json.Encode as Encode
 import Route as WebRoute
 import Server.Query as Query
@@ -77,12 +78,12 @@ toResponse encodedResult =
             ( 200, encoded )
 
 
-toAllImpactsSimple : Simulator -> Encode.Value
-toAllImpactsSimple { impacts, inputs } =
+toAllImpactsSimple : WellKnown -> Simulator -> Encode.Value
+toAllImpactsSimple wellKnown { impacts, inputs } =
     Encode.object
         [ ( "webUrl", serverRootUrl ++ toTextileWebUrl Nothing inputs |> Encode.string )
         , ( "impacts", Impact.encode impacts )
-        , ( "description", inputs |> Inputs.toString |> Encode.string )
+        , ( "description", inputs |> Inputs.toString wellKnown |> Encode.string )
         , ( "query", inputs |> Inputs.toQuery |> TextileQuery.encode )
         ]
 
@@ -101,14 +102,14 @@ toTextileWebUrl maybeTrigram textileQuery =
         |> WebRoute.toString
 
 
-toSingleImpactSimple : Definition.Trigram -> Simulator -> Encode.Value
-toSingleImpactSimple trigram { impacts, inputs } =
+toSingleImpactSimple : WellKnown -> Definition.Trigram -> Simulator -> Encode.Value
+toSingleImpactSimple wellKnown trigram { impacts, inputs } =
     Encode.object
         [ ( "webUrl", serverRootUrl ++ toTextileWebUrl (Just trigram) inputs |> Encode.string )
         , ( "impacts"
           , Impact.encodeSingleImpact impacts trigram
           )
-        , ( "description", inputs |> Inputs.toString |> Encode.string )
+        , ( "description", inputs |> Inputs.toString wellKnown |> Encode.string )
         , ( "query", inputs |> Inputs.toQuery |> TextileQuery.encode )
         ]
 
@@ -263,7 +264,7 @@ handleRequest db request =
 
         Just (Route.TextileGetSimulator (Ok query)) ->
             query
-                |> executeTextileQuery db toAllImpactsSimple
+                |> executeTextileQuery db (toAllImpactsSimple db.textile.wellKnown)
 
         Just (Route.TextileGetSimulator (Err errors)) ->
             Query.encodeErrors errors
@@ -279,7 +280,7 @@ handleRequest db request =
 
         Just (Route.TextileGetSimulatorSingle trigram (Ok query)) ->
             query
-                |> executeTextileQuery db (toSingleImpactSimple trigram)
+                |> executeTextileQuery db (toSingleImpactSimple db.textile.wellKnown trigram)
 
         Just (Route.TextileGetSimulatorSingle _ (Err errors)) ->
             Query.encodeErrors errors
@@ -301,7 +302,7 @@ handleRequest db request =
 
         Just (Route.TextilePostSimulator (Ok textileQuery)) ->
             textileQuery
-                |> executeTextileQuery db toAllImpactsSimple
+                |> executeTextileQuery db (toAllImpactsSimple db.textile.wellKnown)
 
         Just (Route.TextilePostSimulator (Err error)) ->
             encodeStringError error
@@ -317,7 +318,7 @@ handleRequest db request =
 
         Just (Route.TextilePostSimulatorSingle (Ok textileQuery) trigram) ->
             textileQuery
-                |> executeTextileQuery db (toSingleImpactSimple trigram)
+                |> executeTextileQuery db (toSingleImpactSimple db.textile.wellKnown trigram)
 
         Just (Route.TextilePostSimulatorSingle (Err error) _) ->
             encodeStringError error

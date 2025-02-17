@@ -31,7 +31,7 @@ import Data.Common.DecodeUtils as DU
 import Data.Component as Component exposing (Item)
 import Data.Country as Country
 import Data.Split as Split exposing (Split)
-import Data.Textile.DyeingMedium as DyeingMedium exposing (DyeingMedium)
+import Data.Textile.Dyeing as Dyeing exposing (ProcessType)
 import Data.Textile.Economics as Economics
 import Data.Textile.Fabric as Fabric exposing (Fabric)
 import Data.Textile.MakingComplexity as MakingComplexity exposing (MakingComplexity)
@@ -65,7 +65,7 @@ type alias Query =
     , countryMaking : Maybe Country.Code
     , countrySpinning : Maybe Country.Code
     , disabledSteps : List Label
-    , dyeingMedium : Maybe DyeingMedium
+    , dyeingProcessType : Maybe ProcessType
     , fabricProcess : Maybe Fabric
     , fading : Maybe Bool
     , makingComplexity : Maybe MakingComplexity
@@ -155,7 +155,7 @@ decode =
         |> DU.strictOptional "countryMaking" Country.decodeCode
         |> DU.strictOptional "countrySpinning" Country.decodeCode
         |> Pipe.optional "disabledSteps" (Decode.list Label.decodeFromCode) []
-        |> DU.strictOptional "dyeingMedium" DyeingMedium.decode
+        |> DU.strictOptional "dyeingProcessType" Dyeing.decode
         |> DU.strictOptional "fabricProcess" Fabric.decode
         |> DU.strictOptional "fading" Decode.bool
         |> DU.strictOptional "makingComplexity" MakingComplexity.decode
@@ -200,7 +200,7 @@ encode query =
             list ->
                 Encode.list Label.encode list |> Just
       )
-    , ( "dyeingMedium", query.dyeingMedium |> Maybe.map DyeingMedium.encode )
+    , ( "dyeingProcessType", query.dyeingProcessType |> Maybe.map Dyeing.encode )
     , ( "fabricProcess", query.fabricProcess |> Maybe.map Fabric.encode )
     , ( "fading", query.fading |> Maybe.map Encode.bool )
     , ( "makingComplexity", query.makingComplexity |> Maybe.map (MakingComplexity.toString >> Encode.string) )
@@ -269,7 +269,7 @@ handleUpcycling query =
 isAdvancedQuery : List Product -> Query -> Bool
 isAdvancedQuery products query =
     List.any identity
-        [ query.dyeingMedium /= Nothing
+        [ query.dyeingProcessType /= Nothing || query.dyeingProcessType /= Just Dyeing.Average
         , query.fabricProcess /= Nothing
         , query.makingComplexity /= Nothing
         , query.makingDeadStock /= Nothing
@@ -292,7 +292,7 @@ regulatory : List Product -> Query -> Query
 regulatory products query =
     { query
         | disabledSteps = []
-        , dyeingMedium = Nothing
+        , dyeingProcessType = Nothing
         , fabricProcess = Nothing
         , makingComplexity = Nothing
         , makingDeadStock = Nothing
@@ -366,7 +366,7 @@ updateProduct product query =
     if product.id /= query.product then
         -- Product category has changed, reset a bunch of related query params
         { query
-            | dyeingMedium = Nothing
+            | dyeingProcessType = Nothing
             , fabricProcess = Nothing
             , makingComplexity = Nothing
             , makingDeadStock = Nothing
@@ -454,7 +454,7 @@ default =
     , countryMaking = Just (Country.Code "CN")
     , countrySpinning = Just (Country.Code "CN")
     , disabledSteps = []
-    , dyeingMedium = Nothing
+    , dyeingProcessType = Nothing
     , fabricProcess = Nothing
     , fading = Nothing
     , makingComplexity = Nothing

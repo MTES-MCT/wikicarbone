@@ -4,7 +4,6 @@ import Data.Dataset as Dataset
 import Data.Env as Env
 import Data.Scope exposing (Scope)
 import Data.Split as Split
-import Data.Textile.DyeingMedium as DyeingMedium
 import Data.Textile.Economics as Economics
 import Data.Textile.Fabric as Fabric
 import Data.Textile.Formula as Formula
@@ -132,10 +131,6 @@ table db { detailed, scope } =
                 div [ classList [ ( "text-center", not detailed ) ] ]
                     [ Format.splitAsPercentage 0 Env.defaultDeadStock ]
                     |> always
-          }
-        , { label = "Type de teinture*"
-          , toValue = Table.StringValue <| .dyeing >> .defaultMedium >> DyeingMedium.toLabel
-          , toCell = .dyeing >> .defaultMedium >> DyeingMedium.toLabel >> text
           }
         , { label = "Confection (complexité)*"
           , toValue = Table.StringValue <| .making >> .complexity >> MakingComplexity.toLabel

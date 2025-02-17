@@ -28,7 +28,7 @@ import Data.Impact as Impact exposing (Impacts)
 import Data.Process as Process exposing (Process)
 import Data.Split as Split exposing (Split)
 import Data.Textile.Db as Textile
-import Data.Textile.DyeingMedium exposing (DyeingMedium)
+import Data.Textile.Dyeing exposing (ProcessType)
 import Data.Textile.Fabric as Fabric
 import Data.Textile.Formula as Formula
 import Data.Textile.Inputs as Inputs exposing (Inputs)
@@ -54,7 +54,7 @@ type alias Step =
     , country : Country
     , deadstock : Mass
     , durability : Unit.NonPhysicalDurability
-    , dyeingMedium : Maybe DyeingMedium
+    , dyeingProcessType : Maybe ProcessType
     , editable : Bool
     , enabled : Bool
     , heat : Energy
@@ -117,7 +117,7 @@ create { country, editable, enabled, label } =
     , country = country
     , deadstock = Quantity.zero
     , durability = Unit.standardDurability Unit.NonPhysicalDurability
-    , dyeingMedium = Nothing
+    , dyeingProcessType = Nothing
     , editable = editable
     , enabled = enabled
     , heat = Quantity.zero
@@ -355,7 +355,7 @@ getTransportedMass inputs { label, outputMass } =
 updateFromInputs : Textile.Db -> Inputs -> Step -> Step
 updateFromInputs { wellKnown } inputs ({ label, country, complementsImpacts } as step) =
     let
-        { dyeingMedium, makingComplexity, makingDeadStock, makingWaste, printing, surfaceMass, yarnSize } =
+        { dyeingProcessType, makingComplexity, makingDeadStock, makingWaste, printing, surfaceMass, yarnSize } =
             inputs
     in
     case label of
@@ -382,20 +382,22 @@ updateFromInputs { wellKnown } inputs ({ label, country, complementsImpacts } as
 
         Label.Ennobling ->
             { step
-                | dyeingMedium = dyeingMedium
+                | dyeingProcessType = dyeingProcessType
                 , printing = printing
                 , processInfo =
                     { defaultProcessInfo
                         | countryElec = Just country.electricityProcess.name
                         , countryHeat = Just country.heatProcess.name
                         , dyeing =
-                            wellKnown
-                                |> WellKnown.getDyeingProcess
-                                    (dyeingMedium
-                                        |> Maybe.withDefault inputs.product.dyeing.defaultMedium
-                                    )
-                                |> .name
-                                |> Just
+                            -- FIXME
+                            -- wellKnown
+                            --     |> WellKnown.getDyeingProcess
+                            --         (dyeingProcessType
+                            --             |> Maybe.withDefault inputs.product.dyeing.defaultMedium
+                            --         )
+                            --     |> .name
+                            --     |> Just
+                            Nothing
                         , printing =
                             printing
                                 |> Maybe.map

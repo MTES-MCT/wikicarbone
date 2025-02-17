@@ -17,8 +17,9 @@ module Data.Textile.Inputs exposing
 import Data.Component exposing (Item)
 import Data.Country as Country exposing (Country)
 import Data.Impact as Impact
+import Data.Process as Process
 import Data.Split as Split exposing (Split)
-import Data.Textile.DyeingMedium as DyeingMedium exposing (DyeingMedium)
+import Data.Textile.Dyeing as Dyeing exposing (ProcessType)
 import Data.Textile.Economics as Economics
 import Data.Textile.Fabric as Fabric exposing (Fabric)
 import Data.Textile.MakingComplexity as MakingComplexity exposing (MakingComplexity)
@@ -29,6 +30,7 @@ import Data.Textile.Printing as Printing exposing (Printing)
 import Data.Textile.Product as Product exposing (Product)
 import Data.Textile.Query exposing (MaterialQuery, Query)
 import Data.Textile.Step.Label as Label exposing (Label)
+import Data.Textile.WellKnown exposing (WellKnown)
 import Data.Transport as Transport exposing (Distances, Transport)
 import Data.Unit as Unit
 import Json.Encode as Encode
@@ -62,7 +64,7 @@ type alias Inputs =
     , countrySpinning : Country
     , countryUse : Country
     , disabledSteps : List Label
-    , dyeingMedium : Maybe DyeingMedium
+    , dyeingProcessType : Maybe ProcessType
     , fabricProcess : Maybe Fabric
     , fading : Maybe Bool
     , makingComplexity : Maybe MakingComplexity
@@ -185,7 +187,7 @@ fromQuery { countries, textile } query =
         -- The use country is always France
         |> RE.andMap franceResult
         |> RE.andMap (Ok query.disabledSteps)
-        |> RE.andMap (Ok query.dyeingMedium)
+        |> RE.andMap (Ok query.dyeingProcessType)
         |> RE.andMap (Ok query.fabricProcess)
         |> RE.andMap (Ok query.fading)
         |> RE.andMap (Ok query.makingComplexity)
@@ -214,7 +216,7 @@ toQuery inputs =
     , countryMaking = toQueryCountryCode inputs.countryMaking.code
     , countrySpinning = toQueryCountryCode inputs.countrySpinning.code
     , disabledSteps = inputs.disabledSteps
-    , dyeingMedium = inputs.dyeingMedium
+    , dyeingProcessType = inputs.dyeingProcessType
     , fabricProcess = inputs.fabricProcess
     , fading = inputs.fading
     , makingComplexity = inputs.makingComplexity
@@ -244,8 +246,8 @@ toQueryCountryCode c =
         Just c
 
 
-stepsToStrings : Inputs -> List (List String)
-stepsToStrings inputs =
+stepsToStrings : WellKnown -> Inputs -> List (List String)
+stepsToStrings wellKnown inputs =
     let
         ifStepEnabled label list =
             if not (List.member label inputs.disabledSteps) then
@@ -291,12 +293,11 @@ stepsToStrings inputs =
         , inputs.countryFabric.name
         ]
     , ifStepEnabled Label.Ennobling
-        [ case inputs.dyeingMedium of
-            Just dyeingMedium ->
-                "ennoblissement\u{00A0}: teinture sur " ++ DyeingMedium.toLabel dyeingMedium
-
-            Nothing ->
-                "ennoblissement"
+        [ "ennoblissement\u{00A0}: "
+            ++ (inputs.dyeingProcessType
+                    |> Dyeing.toProcess wellKnown
+                    |> Process.getDisplayName
+               )
         , inputs.countryDyeing.name
         ]
     , ifStepEnabled Label.Ennobling
@@ -328,10 +329,10 @@ stepsToStrings inputs =
         |> List.filter (not << List.isEmpty)
 
 
-toString : Inputs -> String
-toString inputs =
+toString : WellKnown -> Inputs -> String
+toString wellKnown inputs =
     inputs
-        |> stepsToStrings
+        |> stepsToStrings wellKnown
         |> List.map (String.join "\u{00A0}: ")
         |> String.join ", "
 
@@ -502,7 +503,7 @@ encode inputs =
         , ( "countryFabric", Country.encode inputs.countryFabric )
         , ( "countryMaking", Country.encode inputs.countryMaking )
         , ( "disabledSteps", Encode.list Label.encode inputs.disabledSteps )
-        , ( "dyeingMedium", inputs.dyeingMedium |> Maybe.map DyeingMedium.encode |> Maybe.withDefault Encode.null )
+        , ( "dyeingProcessType", inputs.dyeingProcessType |> Maybe.map Dyeing.encode |> Maybe.withDefault Encode.null )
         , ( "fabricProcess", inputs.fabricProcess |> Maybe.map Fabric.encode |> Maybe.withDefault Encode.null )
         , ( "fading", inputs.fading |> Maybe.map Encode.bool |> Maybe.withDefault Encode.null )
         , ( "makingComplexity", inputs.makingComplexity |> Maybe.map (MakingComplexity.toString >> Encode.string) |> Maybe.withDefault Encode.null )

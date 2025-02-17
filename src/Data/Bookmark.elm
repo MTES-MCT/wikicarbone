@@ -210,7 +210,7 @@ toQueryDescription db bookmark =
         Textile textileQuery ->
             textileQuery
                 |> Inputs.fromQuery db
-                |> Result.map Inputs.toString
+                |> Result.map (Inputs.toString db.textile.wellKnown)
                 |> Result.withDefault bookmark.name
 
         Veli objectQuery ->

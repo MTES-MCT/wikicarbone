@@ -151,11 +151,11 @@ describe("API", () => {
           );
         });
 
-        it("should validate the dyeingMedium param", async () => {
+        it("should validate the dyeingProcessType param", async () => {
           expectFieldErrorMessage(
-            await makeRequest("/api/textile/simulator", ["dyeingMedium=xxx"]),
-            "dyeingMedium",
-            /support de teinture inconnu: xxx/i,
+            await makeRequest("/api/textile/simulator", ["dyeingProcessType=xxx"]),
+            "dyeingProcessType",
+            /type de teinture inconnu: xxx/i,
           );
         });
 

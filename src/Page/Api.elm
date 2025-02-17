@@ -55,7 +55,14 @@ getApiServerUrl { clientUrl } =
 
 changelog : List News
 changelog =
-    [ { date = "2 janvier 2025"
+    [ { date = "17 février 2025"
+      , level = "major"
+      , domains = [ "Textile" ]
+      , md = """Le paramètre `dyeingMedium`, qui permettait de sélectionner le support de teinture,
+                est remplacé par le nouveau paramètre `dyeingProcessType` permettant de spécifier
+                le type de teinture directement (continue, discontinue, moyenne)."""
+      }
+    , { date = "2 janvier 2025"
       , level = "minor"
       , domains = [ "Textile" ]
       , md = """Un nouveau paramètre `trims` est disponible dans l'API textile pour préciser les

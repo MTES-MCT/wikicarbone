@@ -16,7 +16,7 @@ import Data.Food.Retail as Retail exposing (Distribution)
 import Data.Process as Process exposing (Process)
 import Data.Scope as Scope exposing (Scope)
 import Data.Split as Split exposing (Split)
-import Data.Textile.DyeingMedium as DyeingMedium exposing (DyeingMedium)
+import Data.Textile.Dyeing as Dyeing
 import Data.Textile.Economics as Economics
 import Data.Textile.Fabric as Fabric exposing (Fabric)
 import Data.Textile.MakingComplexity as MakingComplexity exposing (MakingComplexity)
@@ -396,7 +396,7 @@ parseTextileQuery db =
         |> apply (maybeTextileCountryParser "countryMaking" db.countries)
         |> apply (maybeTextileCountryParser "countrySpinning" db.countries)
         |> apply (maybeDisabledStepsParser "disabledSteps")
-        |> apply (maybeDyeingMedium "dyeingMedium")
+        |> apply (maybeDyeingProcessType "dyeingProcessType")
         |> apply (maybeFabricParser "fabricProcess")
         |> apply (maybeBoolParser "fading")
         |> apply (maybeMakingComplexityParser "makingComplexity")
@@ -654,18 +654,18 @@ maybeTextileCountryParser key countries =
             )
 
 
-maybeDyeingMedium : String -> Parser (ParseResult (Maybe DyeingMedium))
-maybeDyeingMedium key =
+maybeDyeingProcessType : String -> Parser (ParseResult (Maybe Dyeing.ProcessType))
+maybeDyeingProcessType key =
     Query.string key
         |> Query.map
             (Maybe.map
                 (\str ->
-                    case DyeingMedium.fromString str of
+                    case Dyeing.fromString str of
                         Err err ->
                             Err ( key, err )
 
-                        Ok dyeingMedium ->
-                            Ok (Just dyeingMedium)
+                        Ok dyeingProcessType ->
+                            Ok (Just dyeingProcessType)
                 )
                 >> Maybe.withDefault (Ok Nothing)
             )

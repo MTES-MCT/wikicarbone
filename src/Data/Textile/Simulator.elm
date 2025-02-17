@@ -15,6 +15,7 @@ import Data.Env as Env
 import Data.Impact as Impact exposing (Impacts)
 import Data.Impact.Definition as Definition
 import Data.Split as Split
+import Data.Textile.Dyeing as Dyeing
 import Data.Textile.Economics as Economics
 import Data.Textile.Fabric as Fabric
 import Data.Textile.Formula as Formula
@@ -332,18 +333,13 @@ computeDyeingImpacts : Db -> Simulator -> Simulator
 computeDyeingImpacts { textile } ({ inputs } as simulator) =
     simulator
         |> updateLifeCycleStep Label.Ennobling
-            (\({ country, dyeingMedium } as step) ->
+            (\({ country, dyeingProcessType } as step) ->
                 let
                     heatProcess =
                         WellKnown.getEnnoblingHeatProcess textile.wellKnown country
 
-                    productDefaultMedium =
-                        dyeingMedium
-                            |> Maybe.withDefault inputs.product.dyeing.defaultMedium
-
                     dyeingProcess =
-                        textile.wellKnown
-                            |> WellKnown.getDyeingProcess productDefaultMedium
+                        Dyeing.toProcess textile.wellKnown dyeingProcessType
 
                     dyeingToxicity =
                         inputs.materials

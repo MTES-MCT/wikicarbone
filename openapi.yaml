@@ -97,7 +97,7 @@ paths:
         - $ref: "#/components/parameters/surfaceMassParam"
         - $ref: "#/components/parameters/fadingParam"
         - $ref: "#/components/parameters/disabledStepsParam"
-        - $ref: "#/components/parameters/dyeingMediumParam"
+        - $ref: "#/components/parameters/dyeingProcessTypeParam"
         - $ref: "#/components/parameters/printingParam"
         - $ref: "#/components/parameters/businessParam"
         - $ref: "#/components/parameters/numberOfReferencesParam"
@@ -171,7 +171,7 @@ paths:
         - $ref: "#/components/parameters/surfaceMassParam"
         - $ref: "#/components/parameters/fadingParam"
         - $ref: "#/components/parameters/disabledStepsParam"
-        - $ref: "#/components/parameters/dyeingMediumParam"
+        - $ref: "#/components/parameters/dyeingProcessTypeParam"
         - $ref: "#/components/parameters/printingParam"
         - $ref: "#/components/parameters/businessParam"
         - $ref: "#/components/parameters/numberOfReferencesParam"
@@ -247,7 +247,7 @@ paths:
         - $ref: "#/components/parameters/surfaceMassParam"
         - $ref: "#/components/parameters/fadingParam"
         - $ref: "#/components/parameters/disabledStepsParam"
-        - $ref: "#/components/parameters/dyeingMediumParam"
+        - $ref: "#/components/parameters/dyeingProcessTypeParam"
         - $ref: "#/components/parameters/printingParam"
         - $ref: "#/components/parameters/businessParam"
         - $ref: "#/components/parameters/numberOfReferencesParam"
@@ -896,19 +896,17 @@ components:
         spinningDyeing:
           summary: "Filature et ennoblissement désactivés"
           value: "spinning,ennobling"
-    dyeingMediumParam:
-      name: dyeingMedium
+    dyeingProcessTypeParam:
+      name: dyeingProcessType
       in: query
       description: |
-        Ce paramètre permet de préciser le support sur lequel s'effectue la teinture ; il peut prendre les valeurs
-        suivantes :
+        Ce paramètre permet de préciser le type de procédé avec lequel est teint le produit; il peut prendre les valeurs suivantes :
 
-        - `article` lorsque la teinture est effectuée sur l'article ;
-        - `fabric` lorsqu'elle est effectuée sur le tissu ;
-        - `yarn` lorsqu'elle est effectuée sur le fil.
+        - `average`: Teinture moyenne
+        - `continuous`: Teinture en continu
+        - `discontinuous`: Teinture discontinue
 
-        ⚠️ En l'absence d'utilisation explicite du paramètre, le support de teinture utilisé sera celui affecté par
-        défaut à la famille de produit.
+        ⚠️ : En l’absence d’utilisation explicite du paramètre, le type de teinture utilisé sera teinture moyenne.
       required: false
       style: form
       schema:
@@ -1258,6 +1256,13 @@ components:
           description: Part de transport aérien
           minimum: 0
           maximum: 1
+        dyeingProcessType:
+          type: string
+          description: Type de teinture
+          enum:
+            - average
+            - continuous
+            - discontinuous
         makingWaste:
           type: number
           description: Taux de perte en confection

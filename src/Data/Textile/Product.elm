@@ -13,7 +13,6 @@ module Data.Textile.Product exposing
 import Data.Component as Component
 import Data.Process as Process exposing (Process)
 import Data.Split as Split exposing (Split)
-import Data.Textile.DyeingMedium as DyeingMedium exposing (DyeingMedium)
 import Data.Textile.Economics as Economics exposing (Economics)
 import Data.Textile.Fabric as Fabric exposing (Fabric)
 import Data.Textile.MakingComplexity as MakingComplexity exposing (MakingComplexity)
@@ -24,11 +23,6 @@ import Json.Decode as Decode exposing (Decoder)
 import Json.Decode.Pipeline as Pipe
 import Json.Encode as Encode
 import Volume exposing (Volume)
-
-
-type alias DyeingOptions =
-    { defaultMedium : DyeingMedium
-    }
 
 
 type alias MakingOptions =
@@ -55,8 +49,7 @@ type alias EndOfLifeOptions =
 
 
 type alias Product =
-    { dyeing : DyeingOptions
-    , economics : Economics
+    { economics : Economics
     , endOfLife : EndOfLifeOptions
     , fabric : Fabric
     , id : Id
@@ -92,12 +85,6 @@ idToString (Id string) =
     string
 
 
-decodeDyeingOptions : Decoder DyeingOptions
-decodeDyeingOptions =
-    Decode.map DyeingOptions
-        (Decode.field "defaultMedium" DyeingMedium.decode)
-
-
 decodeMakingOptions : Decoder MakingOptions
 decodeMakingOptions =
     Decode.succeed MakingOptions
@@ -127,7 +114,6 @@ decodeEndOfLifeOptions =
 decode : List Process -> Decoder Product
 decode processes =
     Decode.succeed Product
-        |> Pipe.required "dyeing" decodeDyeingOptions
         |> Pipe.required "economics" Economics.decode
         |> Pipe.required "endOfLife" decodeEndOfLifeOptions
         |> Pipe.required "fabric" Fabric.decode

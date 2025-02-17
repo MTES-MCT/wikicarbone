@@ -1,6 +1,5 @@
 module Data.Textile.WellKnown exposing
     ( WellKnown
-    , getDyeingProcess
     , getEnnoblingHeatProcess
     , getEnnoblingPreTreatments
     , getPrintingProcess
@@ -10,7 +9,6 @@ module Data.Textile.WellKnown exposing
 
 import Data.Country exposing (Country)
 import Data.Process as Process exposing (Process)
-import Data.Textile.DyeingMedium as DyeingMedium exposing (DyeingMedium)
 import Data.Textile.Material.Origin as Origin exposing (Origin)
 import Data.Textile.Printing as Printing
 import Data.Zone as Zone
@@ -22,11 +20,11 @@ type alias WellKnown =
     , bleaching : Process
     , degreasing : Process
     , distribution : Process
-    , dyeingArticle : Process
     , dyeingCellulosic : Process
-    , dyeingFabric : Process
+    , dyeingProcessAverage : Process
+    , dyeingProcessContinuous : Process
+    , dyeingProcessDiscontinuous : Process
     , dyeingSynthetic : Process
-    , dyeingYarn : Process
     , elecMediumTensionAsia : Process
     , endOfLife : Process
     , fading : Process
@@ -49,19 +47,6 @@ type alias WellKnown =
     , washingSyntheticFibers : Process
     , weaving : Process
     }
-
-
-getDyeingProcess : DyeingMedium -> WellKnown -> Process
-getDyeingProcess medium { dyeingArticle, dyeingFabric, dyeingYarn } =
-    case medium of
-        DyeingMedium.Article ->
-            dyeingArticle
-
-        DyeingMedium.Fabric ->
-            dyeingFabric
-
-        DyeingMedium.Yarn ->
-            dyeingYarn
 
 
 getEnnoblingHeatProcess : WellKnown -> Country -> Process
@@ -119,16 +104,16 @@ load processes =
         |> fromIdString "e04e2729-2489-47ce-b57c-f06a93f5d03b"
         -- distribution
         |> fromIdString "463aa3d1-287e-4d4c-a4ed-78d47600a4b1"
-        -- dyeingArticle
-        |> fromIdString "af54556c-5f74-4f2c-8531-d002eda9d793"
         -- dyeingCellulosic
         |> fromIdString "da9d1c32-a166-41ab-bac6-f67aff0cf44a"
-        -- dyeingFabric
-        |> fromIdString "03c769d5-46b6-4cf9-80f8-f2712692a6ab"
+        -- dyeingProcessAverage
+        |> fromIdString "55bf2578-3195-4ee9-aa5a-03ab2d4738e9"
+        -- dyeingProcessContinuous
+        |> fromIdString "27cd9eb5-85e8-4fda-8fa1-ccb9a2ae118c"
+        -- dyeingProcessDiscontinuous
+        |> fromIdString "057eadfc-36a6-4bc7-b691-7075694360ec"
         -- dyeingSynthetic
         |> fromIdString "ae9cbbad-7982-4f3c-9220-edf27946d347"
-        -- dyeingYarn
-        |> fromIdString "b15afd1b-e7c0-4fbf-9f7b-b2a8b7e74bc7"
         -- elecMediumTensionAsia
         |> fromIdString "9c70a439-ee05-4fc4-9598-7448345f7081"
         -- endOfLife
