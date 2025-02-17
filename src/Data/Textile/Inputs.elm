@@ -181,7 +181,10 @@ fromQuery { countries, textile } query =
         |> RE.andMap mainMaterialCountry
         -- Spinning country is either provided by query or fallbacks to material's default
         -- country, making the parameter optional
-        |> RE.andMap (getCountryResult mainMaterialCountry query.countrySpinning)
+        -- FIXME: choose between unknownCountryResult and mainMaterialCountry:
+        --        - mainMaterialCountry: always use material country whatever user chooses (weird)
+        --        - unknownCountryResult: fallback to unknown country (IN) when no value's provided
+        |> RE.andMap (getCountryResult unknownCountryResult query.countrySpinning)
         -- The use country is always France
         |> RE.andMap franceResult
         |> RE.andMap (Ok query.disabledSteps)
