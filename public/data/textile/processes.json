@@ -1000,7 +1000,7 @@
   },
   {
     "categories": ["material"],
-    "comment": "Ancien identifiant (12/2024): wool-new.",
+    "comment": "corr4: Impacts de la laine par défaut multiplié par le coefficient 4%/37%=0.108. Cela vient d'une différence de taux d'allocation : 4% pour cette laine et 37% pour la laine par défaut.",
     "density": 0,
     "displayName": "Laine nouvelle filière",
     "elec_MJ": 0,
@@ -1009,7 +1009,7 @@
     "impacts": {
       "acd": 0,
       "cch": 0,
-      "ecs": 460.876,
+      "ecs": 300.53,
       "etf": 0,
       "etf-c": 0,
       "fru": 0,
@@ -1023,7 +1023,7 @@
       "mru": 0,
       "ozd": 0,
       "pco": 0,
-      "pef": 502.362,
+      "pef": 316.667,
       "pma": 0,
       "swe": 0,
       "tre": 0,
@@ -2769,14 +2769,14 @@
       "wtu": 0
     },
     "name": "Apprêts chimiques",
-    "source": "Ecobalyse",
+    "source": "Custom",
     "sourceId": null,
     "unit": "kg",
     "waste": 0
   },
   {
     "categories": ["processing"],
-    "comment": "Inventaires enrichis (substances chimiques)\nAncien identifiant (12/2024): ecobalyse-teinture-fibres-synthetiques.",
+    "comment": "corr2 : inventaires enrichis (substances chimiques)\nAncien identifiant (12/2024): ecobalyse-teinture-fibres-synthetiques.",
     "density": 0,
     "displayName": "Teinture fibres synthétiques",
     "elec_MJ": 0,
@@ -2813,7 +2813,7 @@
   },
   {
     "categories": ["processing"],
-    "comment": "Inventaires enrichis (substances chimiques)\nAncien identifiant (12/2024): ecobalyse-teinture-fibres-cellulosiques.",
+    "comment": "corr2 : inventaires enrichis (substances chimiques)\nAncien identifiant (12/2024): ecobalyse-teinture-fibres-cellulosiques.",
     "density": 0,
     "displayName": "Teinture fibres cellulosiques",
     "elec_MJ": 0,
@@ -2850,7 +2850,7 @@
   },
   {
     "categories": ["processing"],
-    "comment": "corr3 et corr2 (cf doc). Corr3 : valeurs d'élec et de chaleur issues du rapport BAT2023 avec majoration de 50%. Corr2 : valeur d'écotox issue d'inventaires enrichis.",
+    "comment": "corr3 et corr2 (cf doc). Corr3 : valeurs d'élec et de chaleur issues du rapport BAT2023 avec majoration de 50%. corr2 : valeur d'écotox issue d'inventaires enrichis.",
     "density": 0,
     "displayName": "Blanchiment",
     "elec_MJ": 0.72,
@@ -2880,14 +2880,14 @@
       "wtu": 0
     },
     "name": "Blanchiment",
-    "source": "Ecobalyse",
+    "source": "Custom",
     "sourceId": null,
     "unit": "kg",
     "waste": 0
   },
   {
     "categories": ["processing"],
-    "comment": "Inventaires enrichis (substances chimiques)\nAncien identifiant (12/2024): ecobalyse-impression-pigmentaire.",
+    "comment": "corr2 : inventaires enrichis (substances chimiques)\nAncien identifiant (12/2024): ecobalyse-impression-pigmentaire.",
     "density": 0,
     "displayName": "Impression (pigmentaire)",
     "elec_MJ": 1.61,
@@ -2924,7 +2924,7 @@
   },
   {
     "categories": ["processing"],
-    "comment": "Inventaires enrichis (substances chimiques)\nAncien identifiant (12/2024): ecobalyse-impression-fixe-lave-colorants.",
+    "comment": "corr2 : inventaires enrichis (substances chimiques)\nAncien identifiant (12/2024): ecobalyse-impression-fixe-lave-colorants.",
     "density": 0,
     "displayName": "Impression fixé-lavé (colorants)",
     "elec_MJ": 1.61,
@@ -3065,7 +3065,7 @@
       "wtu": 0
     },
     "name": "Désencollage",
-    "source": "Ecobalyse",
+    "source": "Custom",
     "sourceId": null,
     "unit": "kg",
     "waste": 0
@@ -3102,7 +3102,7 @@
       "wtu": 0
     },
     "name": "Dégraissage",
-    "source": "Ecobalyse",
+    "source": "Custom",
     "sourceId": null,
     "unit": "kg",
     "waste": 0
@@ -3139,7 +3139,7 @@
       "wtu": 0
     },
     "name": "Lavage (fibres synthétiques)",
-    "source": "Ecobalyse",
+    "source": "Custom",
     "sourceId": null,
     "unit": "kg",
     "waste": 0
@@ -3176,7 +3176,7 @@
       "wtu": 0
     },
     "name": "Mercerisage",
-    "source": "Ecobalyse",
+    "source": "Custom",
     "sourceId": null,
     "unit": "kg",
     "waste": 0
