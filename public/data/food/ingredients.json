@@ -7774,7 +7774,7 @@
     "alias": "melon-non-eu",
     "categories": ["vegetable_fresh"],
     "crop_group": "LEGUMES-FLEURS",
-    "default": "EI3ARUNI000011519604743",
+    "default": "AGRIBALU000000003109266",
     "default_origin": "OutOfEuropeAndMaghreb",
     "density": 0.447,
     "ecosystemicServices": {
@@ -7788,7 +7788,7 @@
     "name": "Melon Hors UE Conv.",
     "raw_to_cooked_ratio": 0.856,
     "scenario": "import",
-    "search": "Melon {GLO}| melon production | Cut-off, U",
+    "search": "Melon, conventional, national average, at farm gate {FR} U",
     "transport_cooling": "none",
     "visible": true
   },
@@ -8082,7 +8082,7 @@
     "alias": "bean-non-eu",
     "categories": ["grain_raw"],
     "crop_group": "AUTRES CEREALES",
-    "default": "EI3ARUNI000011519600047",
+    "default": "MTE00149000081182211003",
     "default_origin": "OutOfEuropeAndMaghreb",
     "density": 1.0,
     "ecosystemicServices": {
@@ -8096,7 +8096,7 @@
     "name": "Pois Hors UE Conv.",
     "raw_to_cooked_ratio": 2.259,
     "scenario": "reference",
-    "search": "protein pea//[ES] protein pea production",
+    "search": "protein pea//[GLO] market for protein pea",
     "transport_cooling": "none",
     "visible": true
   },
@@ -8104,7 +8104,7 @@
     "alias": "bean-eu",
     "categories": ["grain_raw"],
     "crop_group": "AUTRES CEREALES",
-    "default": "EI3ARUNI000011519600047",
+    "default": "MTE00149000081182209249",
     "default_origin": "EuropeAndMaghreb",
     "density": 1.0,
     "ecosystemicServices": {
@@ -8118,7 +8118,7 @@
     "name": "Pois UE Conv.",
     "raw_to_cooked_ratio": 2.259,
     "scenario": "import",
-    "search": "protein pea//[ES] protein pea production",
+    "search": "protein pea FR",
     "transport_cooling": "none",
     "visible": true
   },
@@ -8148,7 +8148,7 @@
     "alias": "chickpea-non-eu",
     "categories": ["nut_oilseed_raw"],
     "crop_group": "LEGUMINEUSES A GRAIN",
-    "default": "EI3ARUNI000011519617720",
+    "default": "MTE00149000081182217498",
     "default_origin": "OutOfEuropeAndMaghreb",
     "density": 0.24,
     "ecosystemicServices": {
@@ -8162,7 +8162,7 @@
     "name": "Pois chiche Hors UE Conv.",
     "raw_to_cooked_ratio": 2.33,
     "scenario": "import",
-    "search": "chickpea//[RoW] chickpea production",
+    "search": "chickpea production RoW",
     "transport_cooling": "none",
     "visible": true
   },
